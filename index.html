@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="pl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aegis Automation | Buduj. Wizualizuj. Udostępniaj.</title>
+    
+    <!-- Fonts: Inter for UI, Fira Code for technical details -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Plotly.js for the interactive chart -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    
+    <!-- Phosphor Icons for modern, clean iconography -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind CSS Setup -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        dark: '#0D1117',
+                        panel: '#161B22',
+                        accent: {
+                            blue: '#00B4FF',
+                            cyan: '#39FFDC',
+                            purple: '#A78BFA'
+                        },
+                        text: {
+                            light: '#C9D1D9',
+                            white: '#F0F6FC'
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0D1117;
+            color: #C9D1D9;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism Panels */
+        .glass-panel {
+            background: rgba(22, 27, 34, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Subtle Glow Effects */
+        .glow-cyan {
+            box-shadow: 0 0 20px rgba(57, 255, 220, 0.15);
+        }
+        
+        .glow-cyan:hover {
+            box-shadow: 0 0 30px rgba(57, 255, 220, 0.3);
+            border-color: rgba(57, 255, 220, 0.4);
+        }
+
+        .glow-blue {
+            box-shadow: 0 0 20px rgba(0, 180, 255, 0.15);
+        }
+
+        .glow-blue:hover {
+            box-shadow: 0 0 30px rgba(0, 180, 255, 0.3);
+            border-color: rgba(0, 180, 255, 0.4);
+        }
+
+        /* Animated Gradients */
+        .text-gradient {
+            background: linear-gradient(to right, #00B4FF, #39FFDC);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .text-gradient-purple {
+            background: linear-gradient(to right, #A78BFA, #00B4FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0D1117;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #161B22;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #39FFDC;
+        }
+
+        /* Canvas Background */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        
+        /* Grid overlay to mimic GitHub/Hacker aesthetic */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: 
+                linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -2;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-accent-blue selection:text-white">
+
+    <!-- Backgrounds -->
+    <div class="grid-overlay"></div>
+    <canvas id="particle-canvas"></canvas>
+    
+    <!-- Animated background blobs -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden z-[-1] pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-accent-blue/10 rounded-full mix-blend-screen filter blur-[100px] opacity-50 animate-blob"></div>
+        <div class="absolute top-[20%] right-[-10%] w-[35rem] h-[35rem] bg-accent-purple/10 rounded-full mix-blend-screen filter blur-[100px] opacity-50 animate-blob" style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-[-20%] left-[20%] w-[45rem] h-[45rem] bg-accent-cyan/10 rounded-full mix-blend-screen filter blur-[100px] opacity-50 animate-blob" style="animation-delay: 4s;"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-panel border-b border-white/5 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+                    <div class="w-8 h-8 rounded bg-gradient-to-br from-accent-blue to-accent-cyan flex items-center justify-center shadow-[0_0_15px_rgba(0,180,255,0.4)]">
+                        <i class="ph ph-hexagon text-dark text-xl font-bold"></i>
+                    </div>
+                    <span class="text-text-white font-bold text-xl tracking-tight">Aegis<span class="text-accent-blue"> Automation</span></span>
+                </div>
+                
+                <!-- Links (Desktop) -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#platform" class="text-text-light hover:text-text-white hover:text-accent-cyan transition-colors px-3 py-2 rounded-md text-sm font-medium">Platforma</a>
+                        <a href="#solutions" class="text-text-light hover:text-text-white hover:text-accent-cyan transition-colors px-3 py-2 rounded-md text-sm font-medium">Rozwiązania</a>
+                        <a href="#pricing" class="text-text-light hover:text-text-white hover:text-accent-cyan transition-colors px-3 py-2 rounded-md text-sm font-medium">Cennik</a>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="hidden md:block">
+                    <a href="#contact" class="glass-panel text-accent-cyan border-accent-cyan/30 hover:border-accent-cyan hover:bg-accent-cyan/10 transition-all duration-300 px-5 py-2 rounded-md text-sm font-medium shadow-[0_0_10px_rgba(57,255,220,0.1)]">
+                        Umów Demo
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="-mr-2 flex md:hidden">
+                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-text-light hover:text-white hover:bg-panel focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark focus:ring-white">
+                        <i class="ph ph-list text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="pt-32 pb-16 sm:pt-40 sm:pb-24 lg:pb-32 overflow-hidden min-h-screen flex flex-col justify-center">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative text-center">
+            
+            <!-- Live Data Badge -->
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel border-accent-cyan/30 text-xs font-mono text-accent-cyan mb-8">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-cyan opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-accent-cyan"></span>
+                </span>
+                SYSTEM AKTYWNY // POŁĄCZENIE WEBSOCKET
+            </div>
+
+            <!-- Headlines -->
+            <h1 class="text-5xl sm:text-7xl font-extrabold tracking-tight text-text-white mb-6">
+                Buduj. <span class="text-gradient">Wizualizuj.</span> Udostępniaj.
+            </h1>
+            <p class="mt-4 max-w-2xl text-lg sm:text-xl text-text-light mx-auto mb-10">
+                Systemy automatyzacji i wizualizacji danych nowej generacji dla nowoczesnych laboratoriów i inteligentnych procesów produkcyjnych.
+            </p>
+
+            <!-- Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+                <a href="#" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-dark bg-accent-cyan hover:bg-[#2CE5C4] glow-cyan transition-all duration-300">
+                    Wypróbuj za darmo <i class="ph-bold ph-arrow-right ml-2"></i>
+                </a>
+                <a href="#" class="inline-flex items-center justify-center px-8 py-3 border border-white/10 glass-panel text-base font-medium rounded-md text-text-white hover:border-white/30 transition-all duration-300">
+                    <i class="ph ph-github-logo mr-2 text-xl"></i> Zobacz Dokumentację
+                </a>
+            </div>
+
+            <!-- The Plotly Interactive Chart Showcase -->
+            <div class="relative max-w-5xl mx-auto mt-10">
+                <!-- Decorative Hacker frame elements -->
+                <div class="absolute -top-px -left-px w-4 h-4 border-t-2 border-l-2 border-accent-blue z-10"></div>
+                <div class="absolute -top-px -right-px w-4 h-4 border-t-2 border-r-2 border-accent-blue z-10"></div>
+                <div class="absolute -bottom-px -left-px w-4 h-4 border-b-2 border-l-2 border-accent-blue z-10"></div>
+                <div class="absolute -bottom-px -right-px w-4 h-4 border-b-2 border-r-2 border-accent-blue z-10"></div>
+                
+                <div class="glass-panel p-2 sm:p-4 rounded-xl overflow-hidden shadow-2xl relative glow-blue transition-all duration-500 hover:shadow-[0_0_40px_rgba(0,180,255,0.25)] group">
+                    
+                    <!-- App-like header -->
+                    <div class="flex items-center justify-between border-b border-white/5 pb-3 mb-2 px-2">
+                        <div class="flex items-center gap-3">
+                            <i class="ph-fill ph-chart-line-up text-accent-blue"></i>
+                            <span class="text-sm font-mono text-text-light">analiza_wydajnosci_produkcji.py</span>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Plotly Container -->
+                    <div id="hero-chart" class="w-full h-[300px] sm:h-[450px]"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Solutions Section -->
+    <section id="solutions" class="py-24 relative z-10 border-t border-white/5 bg-panel/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-sm font-mono text-accent-purple uppercase tracking-widest mb-2">Kluczowa Infrastruktura</h2>
+                <h3 class="text-3xl md:text-4xl font-bold text-text-white">Precyzyjne Narzędzia dla Krytycznych Procesów</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="glass-panel p-8 rounded-2xl transition-all duration-300 hover:-translate-y-2 hover:border-accent-blue/30 group">
+                    <div class="w-12 h-12 rounded-lg bg-accent-blue/10 flex items-center justify-center mb-6 group-hover:bg-accent-blue/20 transition-colors">
+                        <i class="ph ph-flask text-2xl text-accent-blue"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold text-text-white mb-3">Automatyzacja Laboratorium</h4>
+                    <p class="text-text-light text-sm leading-relaxed mb-4">
+                        Automatyzuj integracje LIMS, podłączaj spektrofotometry i przesyłaj wyniki analiz w czasie rzeczywistym bezpośrednio do bezpiecznych, niezmiennych paneli.
+                    </p>
+                    <a href="#" class="inline-flex items-center text-sm font-mono text-accent-blue hover:text-accent-cyan transition-colors">
+                        Odkryj moduł <i class="ph ph-arrow-right ml-1"></i>
+                    </a>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="glass-panel p-8 rounded-2xl transition-all duration-300 hover:-translate-y-2 hover:border-accent-cyan/30 group relative overflow-hidden">
+                    <!-- Glow behind card -->
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-accent-cyan/10 blur-[30px] rounded-full pointer-events-none group-hover:bg-accent-cyan/20 transition-colors"></div>
+                    
+                    <div class="w-12 h-12 rounded-lg bg-accent-cyan/10 flex items-center justify-center mb-6 group-hover:bg-accent-cyan/20 transition-colors">
+                        <i class="ph ph-factory text-2xl text-accent-cyan"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold text-text-white mb-3">Systemy Kontroli Jakości</h4>
+                    <p class="text-text-light text-sm leading-relaxed mb-4">
+                        Wdrażaj błyskawicznie karty statystycznego sterowania procesem (SPC). Monitoruj limity kontrolne, wykrywaj anomalie za pomocą ML i uruchamiaj natychmiastowe powiadomienia.
+                    </p>
+                    <a href="#" class="inline-flex items-center text-sm font-mono text-accent-cyan hover:text-accent-blue transition-colors">
+                        Odkryj moduł <i class="ph ph-arrow-right ml-1"></i>
+                    </a>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="glass-panel p-8 rounded-2xl transition-all duration-300 hover:-translate-y-2 hover:border-accent-purple/30 group">
+                    <div class="w-12 h-12 rounded-lg bg-accent-purple/10 flex items-center justify-center mb-6 group-hover:bg-accent-purple/20 transition-colors">
+                        <i class="ph ph-cpu text-2xl text-accent-purple"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold text-text-white mb-3">Integracja SCADA</h4>
+                    <p class="text-text-light text-sm leading-relaxed mb-4">
+                        Łącz się bezpośrednio ze sterownikami PLC i serwerami OPC-UA. Pobieraj, przetwarzaj i wizualizuj dane z czujników o wysokiej częstotliwości przy zerowym opóźnieniu na hali produkcyjnej.
+                    </p>
+                    <a href="#" class="inline-flex items-center text-sm font-mono text-accent-purple hover:text-accent-cyan transition-colors">
+                        Odkryj moduł <i class="ph ph-arrow-right ml-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section (Poland Market) -->
+    <section id="pricing" class="py-24 relative z-10 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-sm font-mono text-accent-blue uppercase tracking-widest mb-2">Przejrzysty Cennik</h2>
+                <h3 class="text-3xl md:text-4xl font-bold text-text-white mb-4">Dostosowany do Polskiego Przemysłu</h3>
+                <p class="text-text-light max-w-xl mx-auto">Brak ukrytych opłat. Przewidywalne modele SaaS i On-Premise zaprojektowane dla lokalnych laboratoriów i centrów produkcyjnych.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center max-w-6xl mx-auto">
+                
+                <!-- Tier 1: Lab Starter -->
+                <div class="glass-panel p-8 rounded-2xl border border-white/5 hover:border-white/20 transition-all">
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-text-white">Lab Starter</h4>
+                        <p class="text-text-light text-sm mt-2">Idealne dla małych laboratoriów rozpoczynających automatyzację.</p>
+                    </div>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-text-white">899</span>
+                        <span class="text-text-light font-mono text-sm"> PLN / mc</span>
+                    </div>
+                    <ul class="space-y-4 mb-8 text-sm text-text-light">
+                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-cyan mr-3 text-lg"></i> Do 5 urządzeń (LIMS)</li>
+                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-cyan mr-3 text-lg"></i> 3 Interaktywne Panele</li>
+                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-cyan mr-3 text-lg"></i> Retencja danych: 1 Rok</li>
+                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-cyan mr-3 text-lg"></i> Wsparcie e-mail (9/5)</li>
+                    </ul>
+                    <button class="w-full py-2.5 px-4 rounded-md glass-panel border border-white/10 hover:bg-white/5 text-text-white transition-all font-medium text-sm">
+                        Zacznij Okres Próbny
+                    </button>
+                </div>
+
+                <!-- Tier 2: Industry Pro (Highlighted) -->
+                <div class="glass-panel p-8 rounded-2xl border border-accent-blue/50 glow-blue relative transform md:-translate-y-4 bg-panel/80">
+                    <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-accent-blue to-accent-cyan text-dark text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                        Najpopularniejszy
+                    </div>
+                    <div class="mb-6 mt-2">
+                        <h4 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-accent-blue to-accent-cyan">Industry Pro</h4>
+                        <p class="text-text-light text-sm mt-2">Kompleksowa analityka dla linii produkcyjnych.</p>
+                    </div>
+                    <div class="mb-6">
+                        <span class="text-5xl font-bold text-text-white">2 499</span>
+                        <span class="text-text-light font-mono text-sm"> PLN / mc</span>
+                    </div>
+                    <ul class="space-y-4 mb-8 text-sm text-text-white">
+                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-cyan mr-3 text-lg"></i> Nielimitowane połączenia OPC-UA / SCADA</li>
+                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-cyan mr-3 text-lg"></i> Monitorowanie SPC na żywo</li>
+                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-cyan mr-3 text-lg"></i> Zaawansowane eksporty Plotly.js</li>
+                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-cyan mr-3 text-lg"></i> Integracje API z ERP/MES</li>
+                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-cyan mr-3 text-lg"></i> Priorytetowe wsparcie (SLA)</li>
+                    </ul>
+                    <button class="w-full py-3 px-4 rounded-md bg-accent-blue hover:bg-[#0099DD] text-dark transition-all font-bold text-sm shadow-[0_0_15px_rgba(0,180,255,0.4)]">
+                        Kontakt ze Sprzedażą
+                    </button>
+                </div>
+
+                <!-- Tier 3: Enterprise On-Prem -->
+                <div class="glass-panel p-8 rounded-2xl border border-white/5 hover:border-white/20 transition-all">
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-text-white">Enterprise On-Prem</h4>
+                        <p class="text-text-light text-sm mt-2">Maksymalne bezpieczeństwo i własne modele ML.</p>
+                    </div>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-text-white">5 999</span>
+                        <span class="text-text-light font-mono text-sm"> PLN / mc</span>
+                    </div>
+                    <ul class="space-y-4 mb-8 text-sm text-text-light">
+                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-purple mr-3 text-lg"></i> Lokalny serwer / Chmura prywatna</li>
+                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-purple mr-3 text-lg"></i> Dedykowane modele Machine Learning</li>
+                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-purple mr-3 text-lg"></i> Pełne White-labeling (własna marka)</li>
+                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-purple mr-3 text-lg"></i> Dedykowany Inżynier Wdrożeniowy</li>
+                    </ul>
+                    <button class="w-full py-2.5 px-4 rounded-md glass-panel border border-white/10 hover:bg-white/5 text-text-white transition-all font-medium text-sm">
+                        Poproś o Wycenę
+                    </button>
+                </div>
+
+            </div>
+            
+            <div class="mt-12 text-center text-xs text-text-light/60 font-mono">
+                * Podane ceny są cenami netto (bez 23% VAT). Przy skomplikowanych wdrożeniach SCADA mogą obowiązywać dodatkowe opłaty wdrożeniowe.
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 bg-[#0A0C10] pt-16 pb-8 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="ph-fill ph-hexagon text-accent-blue text-2xl"></i>
+                        <span class="text-text-white font-bold text-lg">Aegis Automation</span>
+                    </div>
+                    <p class="text-sm text-text-light font-mono">
+                        Dane > Wizualizacja > Działanie.
+                    </p>
+                </div>
+                <div>
+                    <h5 class="text-text-white font-semibold mb-4">Produkty</h5>
+                    <ul class="space-y-2 text-sm text-text-light">
+                        <li><a href="#" class="hover:text-accent-cyan transition-colors">Automatyzacja Laboratorium</a></li>
+                        <li><a href="#" class="hover:text-accent-cyan transition-colors">Panele SPC</a></li>
+                        <li><a href="#" class="hover:text-accent-cyan transition-colors">Konektory IoT</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-text-white font-semibold mb-4">Firma</h5>
+                    <ul class="space-y-2 text-sm text-text-light">
+                        <li><a href="#" class="hover:text-accent-cyan transition-colors">O nas</a></li>
+                        <li><a href="#" class="hover:text-accent-cyan transition-colors">Kariera</a></li>
+                        <li><a href="#" class="hover:text-accent-cyan transition-colors">Kontakt (PL)</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-text-white font-semibold mb-4">Kwestie Prawne</h5>
+                    <ul class="space-y-2 text-sm text-text-light">
+                        <li><a href="#" class="hover:text-accent-cyan transition-colors">Polityka Prywatności</a></li>
+                        <li><a href="#" class="hover:text-accent-cyan transition-colors">Regulamin Świadczenia Usług</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-white/5 pt-8 text-center text-sm text-text-light/60 font-mono">
+                &copy; 2026 Nexis Automation Sp. z o.o. Wszelkie prawa zastrzeżone.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ----------------------------------------------------
+        // 1. PLOTLY CHART INITIALIZATION & ANIMATION
+        // ----------------------------------------------------
+        document.addEventListener('DOMContentLoaded', () => {
+            const chartDiv = document.getElementById('hero-chart');
+            
+            // Generate some synthetic manufacturing/lab data
+            function generateData(points, noiseLevel, trend) {
+                let y = [];
+                let x = [];
+                let val = 50;
+                for(let i = 0; i < points; i++) {
+                    x.push(i);
+                    val += (Math.random() - 0.5) * noiseLevel + trend;
+                    y.push(val);
+                }
+                return {x, y};
+            }
+
+            const data1 = generateData(100, 3, 0.1);
+            const data2 = generateData(100, 2, 0.05);
+
+            const trace1 = {
+                x: data1.x,
+                y: data1.y,
+                mode: 'lines+markers',
+                name: 'Wydajność (%)',
+                line: {
+                    color: '#00B4FF', // Accent Blue
+                    width: 3,
+                    shape: 'spline',
+                    smoothing: 1.3
+                },
+                marker: {
+                    size: 4,
+                    color: '#00B4FF',
+                    symbol: 'circle'
+                },
+                fill: 'tozeroy',
+                fillcolor: 'rgba(0, 180, 255, 0.05)',
+                hoverinfo: 'y+name'
+            };
+
+            const trace2 = {
+                x: data2.x,
+                y: data2.y.map(val => val - 20), // offset for visual distinction
+                mode: 'lines',
+                name: 'Limit Kontrolny',
+                line: {
+                    color: '#A78BFA', // Accent Purple
+                    width: 2,
+                    dash: 'dot'
+                },
+                hoverinfo: 'none'
+            };
+
+            const layout = {
+                paper_bgcolor: 'transparent',
+                plot_bgcolor: 'transparent',
+                margin: { t: 20, r: 20, l: 40, b: 40 },
+                font: {
+                    family: 'Fira Code, monospace',
+                    color: '#8b949e',
+                    size: 11
+                },
+                xaxis: {
+                    showgrid: true,
+                    gridcolor: 'rgba(255, 255, 255, 0.05)',
+                    zeroline: false,
+                    showline: true,
+                    linecolor: 'rgba(255, 255, 255, 0.1)',
+                },
+                yaxis: {
+                    showgrid: true,
+                    gridcolor: 'rgba(255, 255, 255, 0.05)',
+                    zeroline: false,
+                    showline: true,
+                    linecolor: 'rgba(255, 255, 255, 0.1)',
+                },
+                hovermode: 'closest',
+                showlegend: true,
+                legend: {
+                    x: 0.02,
+                    y: 0.98,
+                    bgcolor: 'rgba(22, 27, 34, 0.8)',
+                    bordercolor: 'rgba(255, 255, 255, 0.1)',
+                    borderwidth: 1,
+                    font: { color: '#C9D1D9' }
+                },
+                // Dark mode tooltip styling
+                hoverlabel: {
+                    bgcolor: '#161B22',
+                    font: { family: 'Inter', color: '#F0F6FC' },
+                    bordercolor: '#39FFDC'
+                }
+            };
+
+            const config = {
+                responsive: true,
+                displayModeBar: false
+            };
+
+            Plotly.newPlot(chartDiv, [trace1, trace2], layout, config);
+
+            // Simulate real-time data streaming update
+            let cnt = 100;
+            setInterval(() => {
+                let update = {
+                    x: [[cnt], [cnt]],
+                    y: [[data1.y[data1.y.length-1] + (Math.random() - 0.5) * 3 + 0.1], [data2.y[data2.y.length-1] + (Math.random() - 0.5) * 2]]
+                };
+                
+                Plotly.extendTraces(chartDiv, update, [0, 1]);
+                
+                // Keep the window sliding (keep last 100 points)
+                if(cnt > 100) {
+                    Plotly.relayout(chartDiv, {
+                        xaxis: {
+                            range: [cnt - 100, cnt],
+                            showgrid: true, gridcolor: 'rgba(255, 255, 255, 0.05)', showline: true, linecolor: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    });
+                }
+                cnt++;
+            }, 1000);
+            
+            // Handle window resize explicitly just in case
+            window.addEventListener('resize', () => {
+                Plotly.Plots.resize(chartDiv);
+            });
+        });
+
+        // ----------------------------------------------------
+        // 2. CANVAS PARTICLE NETWORK (Hacker-space Aesthetic)
+        // ----------------------------------------------------
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let particles = [];
+        let particleCount = 70; // Adjust based on performance vs visual preference
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // Re-adjust particle count on mobile
+            particleCount = window.innerWidth < 768 ? 30 : 80;
+            initParticles();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 1.5 + 0.5;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Bounce off edges
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(57, 255, 220, 0.5)'; // Cyan color
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function drawLines() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 120) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        // Opacity based on distance
+                        const opacity = 1 - (distance / 120);
+                        ctx.strokeStyle = `rgba(0, 180, 255, ${opacity * 0.2})`; // Blue lines
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            
+            drawLines();
+            requestAnimationFrame(animateCanvas);
+        }
+
+        // Initialize and Start
+        resizeCanvas();
+        animateCanvas();
+
+    </script>
+</body>
+</html>
