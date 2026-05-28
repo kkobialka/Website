@@ -3,15 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aegis Automation | Buduj. Wizualizuj. Udostępniaj.</title>
+    <title>Aegis Automation | Buduj. Zabezpiecz. Kontroluj.</title>
     
     <!-- Fonts: Inter for UI, Fira Code for technical details -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Plotly.js for the interactive chart -->
-    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     
     <!-- Phosphor Icons for modern, clean iconography -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -172,7 +169,7 @@
                     <div class="w-8 h-8 rounded bg-gradient-to-br from-accent-blue to-accent-cyan flex items-center justify-center shadow-[0_0_15px_rgba(0,180,255,0.4)]">
                         <i class="ph ph-hexagon text-dark text-xl font-bold"></i>
                     </div>
-                    <span class="text-text-white font-bold text-xl tracking-tight">Aegis<span class="text-accent-blue"> Automation</span></span>
+                    <span class="text-text-white font-bold text-xl tracking-tight">Aegis<span class="text-accent-blue">Auto</span></span>
                 </div>
                 
                 <!-- Links (Desktop) -->
@@ -211,15 +208,15 @@
                   <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-cyan opacity-75"></span>
                   <span class="relative inline-flex rounded-full h-2 w-2 bg-accent-cyan"></span>
                 </span>
-                SYSTEM AKTYWNY // POŁĄCZENIE WEBSOCKET
+                AEGIS ACTIVE // SECURE CONNECTION
             </div>
 
             <!-- Headlines -->
             <h1 class="text-5xl sm:text-7xl font-extrabold tracking-tight text-text-white mb-6">
-                Buduj. <span class="text-gradient">Wizualizuj.</span> Udostępniaj.
+                Buduj. <span class="text-gradient">Zabezpiecz.</span> Kontroluj.
             </h1>
             <p class="mt-4 max-w-2xl text-lg sm:text-xl text-text-light mx-auto mb-10">
-                Systemy automatyzacji i wizualizacji danych nowej generacji dla nowoczesnych laboratoriów i inteligentnych procesów produkcyjnych.
+                Bezpieczne systemy automatyzacji i wizualizacji danych dla laboratoriów oraz inteligentnych linii produkcyjnych.
             </p>
 
             <!-- Buttons -->
@@ -232,31 +229,123 @@
                 </a>
             </div>
 
-            <!-- The Plotly Interactive Chart Showcase -->
-            <div class="relative max-w-5xl mx-auto mt-10">
+            <!-- Aegis Shield Network Visual -->
+            <div class="relative max-w-[860px] mx-auto mt-6">
                 <!-- Decorative Hacker frame elements -->
                 <div class="absolute -top-px -left-px w-4 h-4 border-t-2 border-l-2 border-accent-blue z-10"></div>
                 <div class="absolute -top-px -right-px w-4 h-4 border-t-2 border-r-2 border-accent-blue z-10"></div>
                 <div class="absolute -bottom-px -left-px w-4 h-4 border-b-2 border-l-2 border-accent-blue z-10"></div>
                 <div class="absolute -bottom-px -right-px w-4 h-4 border-b-2 border-r-2 border-accent-blue z-10"></div>
                 
-                <div class="glass-panel p-2 sm:p-4 rounded-xl overflow-hidden shadow-2xl relative glow-blue transition-all duration-500 hover:shadow-[0_0_40px_rgba(0,180,255,0.25)] group">
+                <div class="glass-panel p-2 sm:p-4 rounded-2xl overflow-hidden shadow-2xl relative glow-blue transition-all duration-500 hover:shadow-[0_0_35px_rgba(57,255,220,0.2)] group">
                     
                     <!-- App-like header -->
-                    <div class="flex items-center justify-between border-b border-white/5 pb-3 mb-2 px-2">
+                    <div class="flex items-center justify-between border-b border-white/5 pb-3 mb-3 px-3">
                         <div class="flex items-center gap-3">
-                            <i class="ph-fill ph-chart-line-up text-accent-blue"></i>
-                            <span class="text-sm font-mono text-text-light">analiza_wydajnosci_produkcji.py</span>
+                            <i class="ph-fill ph-shield-check text-accent-cyan"></i>
+                            <span class="text-sm font-mono text-text-light">aegis_core.tsx</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-accent-cyan/10 text-accent-cyan font-mono tracking-wider">LIVE</span>
                         </div>
                         <div class="flex gap-1.5">
-                            <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
-                            <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-                            <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-red-500/80 hover:bg-red-500 transition-colors cursor-pointer"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500/80 hover:bg-yellow-500 transition-colors cursor-pointer"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500/80 hover:bg-green-500 transition-colors cursor-pointer"></div>
                         </div>
                     </div>
                     
-                    <!-- Plotly Container -->
-                    <div id="hero-chart" class="w-full h-[300px] sm:h-[450px]"></div>
+                    <!-- Interesting Graphics: Aegis Shield + Connected Modules -->
+                    <div class="relative flex flex-col items-center py-6 px-2 sm:px-4">
+                        
+                        <!-- Central Pulsing Shield -->
+                        <div class="relative flex items-center justify-center mb-7" style="width: 162px; height: 162px;">
+                            <!-- Outer defense rings -->
+                            <div class="absolute inset-0 rounded-full border-[1.5px] border-accent-cyan/25 animate-[ping_4s_cubic-bezier(0.4,0,0.6,1)_infinite]"></div>
+                            <div class="absolute inset-[13px] rounded-full border border-accent-blue/20" style="animation: ping 2.8s cubic-bezier(0.4,0,0.6,1) infinite 380ms;"></div>
+                            
+                            <!-- Main Shield Icon with heavy glow -->
+                            <div class="relative z-10 flex items-center justify-center">
+                                <i class="ph-fill ph-shield text-[128px] text-accent-cyan drop-shadow-[0_0_30px_rgba(57,255,220,0.55)]"></i>
+                                <!-- Inner dark shield for depth -->
+                                <i class="ph-fill ph-shield absolute text-[78px] text-[#0D1117]" style="filter: drop-shadow(0 0 6px rgba(0,180,255,0.9));"></i>
+                            </div>
+                            
+                            <!-- Orbiting status markers -->
+                            <div class="absolute w-[9px] h-[9px] bg-accent-cyan rounded-full top-[14px] right-[32px] shadow-[0_0_9px_#39FFDC] animate-pulse"></div>
+                            <div class="absolute w-[7px] h-[7px] bg-accent-blue rounded-full bottom-[26px] left-[18px] shadow-[0_0_7px_#00B4FF] animate-pulse" style="animation-delay: 650ms;"></div>
+                            <div class="absolute w-2 h-2 bg-white/90 rounded-full top-[38px] left-[19px] animate-pulse" style="animation-delay: 1200ms;"></div>
+                        </div>
+
+                        <!-- Hex-style module grid representing protected systems -->
+                        <div class="grid grid-cols-3 sm:grid-cols-6 gap-2.5 w-full max-w-[640px]">
+                            
+                            <div class="group flex flex-col items-center gap-1 p-2.5 rounded-xl bg-white/5 border border-white/10 hover:border-accent-blue/60 hover:bg-white/10 transition-all active:scale-[0.985]">
+                                <div class="w-9 h-9 rounded-lg bg-accent-blue/10 flex items-center justify-center group-hover:bg-accent-blue/25 transition-colors">
+                                    <i class="ph-fill ph-flask text-accent-blue text-[21px]"></i>
+                                </div>
+                                <div class="text-center leading-tight">
+                                    <div class="text-[11px] font-semibold text-text-white tracking-tight">Laboratorium</div>
+                                    <div class="text-[9px] text-accent-cyan/70 font-mono">LIMS • 14</div>
+                                </div>
+                            </div>
+                            
+                            <div class="group flex flex-col items-center gap-1 p-2.5 rounded-xl bg-white/5 border border-white/10 hover:border-accent-purple/60 hover:bg-white/10 transition-all active:scale-[0.985]">
+                                <div class="w-9 h-9 rounded-lg bg-accent-purple/10 flex items-center justify-center group-hover:bg-accent-purple/25 transition-colors">
+                                    <i class="ph-fill ph-factory text-accent-purple text-[21px]"></i>
+                                </div>
+                                <div class="text-center leading-tight">
+                                    <div class="text-[11px] font-semibold text-text-white tracking-tight">Produkcja</div>
+                                    <div class="text-[9px] text-accent-cyan/70 font-mono">SCADA • 9</div>
+                                </div>
+                            </div>
+                            
+                            <div class="group flex flex-col items-center gap-1 p-2.5 rounded-xl bg-white/5 border border-white/10 hover:border-accent-blue/60 hover:bg-white/10 transition-all active:scale-[0.985]">
+                                <div class="w-9 h-9 rounded-lg bg-accent-blue/10 flex items-center justify-center group-hover:bg-accent-blue/25 transition-colors">
+                                    <i class="ph-fill ph-cpu text-accent-blue text-[21px]"></i>
+                                </div>
+                                <div class="text-center leading-tight">
+                                    <div class="text-[11px] font-semibold text-text-white tracking-tight">Sterowniki</div>
+                                    <div class="text-[9px] text-accent-cyan/70 font-mono">PLC • 34</div>
+                                </div>
+                            </div>
+                            
+                            <div class="group flex flex-col items-center gap-1 p-2.5 rounded-xl bg-white/5 border border-white/10 hover:border-accent-cyan/60 hover:bg-white/10 transition-all active:scale-[0.985]">
+                                <div class="w-9 h-9 rounded-lg bg-accent-cyan/10 flex items-center justify-center group-hover:bg-accent-cyan/25 transition-colors">
+                                    <i class="ph-fill ph-wifi-high text-accent-cyan text-[21px]"></i>
+                                </div>
+                                <div class="text-center leading-tight">
+                                    <div class="text-[11px] font-semibold text-text-white tracking-tight">Czujniki</div>
+                                    <div class="text-[9px] text-accent-cyan/70 font-mono">251 LIVE</div>
+                                </div>
+                            </div>
+                            
+                            <div class="group flex flex-col items-center gap-1 p-2.5 rounded-xl bg-white/5 border border-white/10 hover:border-accent-purple/60 hover:bg-white/10 transition-all active:scale-[0.985]">
+                                <div class="w-9 h-9 rounded-lg bg-accent-purple/10 flex items-center justify-center group-hover:bg-accent-purple/25 transition-colors">
+                                    <i class="ph-fill ph-check-circle text-accent-purple text-[21px]"></i>
+                                </div>
+                                <div class="text-center leading-tight">
+                                    <div class="text-[11px] font-semibold text-text-white tracking-tight">Jakość</div>
+                                    <div class="text-[9px] text-accent-cyan/70 font-mono">SPC 99.8%</div>
+                                </div>
+                            </div>
+                            
+                            <div class="group flex flex-col items-center gap-1 p-2.5 rounded-xl bg-white/5 border border-white/10 hover:border-accent-cyan/60 hover:bg-white/10 transition-all active:scale-[0.985]">
+                                <div class="w-9 h-9 rounded-lg bg-accent-cyan/10 flex items-center justify-center group-hover:bg-accent-cyan/25 transition-colors">
+                                    <i class="ph-fill ph-lock text-accent-cyan text-[21px]"></i>
+                                </div>
+                                <div class="text-center leading-tight">
+                                    <div class="text-[11px] font-semibold text-text-white tracking-tight">Aegis Guard</div>
+                                    <div class="text-[9px] text-accent-cyan/70 font-mono">PROTECTED</div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        <!-- Bottom status line -->
+                        <div class="mt-5 flex items-center gap-2 text-[10px] font-mono text-text-light/60 tracking-widest">
+                            <span class="inline-block w-1.5 h-1.5 rounded-full bg-accent-cyan animate-pulse"></span>
+                            47 SYSTEMY ZABEZPIECZONE • INTEGRACJA W CZASIE RZECZYWISTYM
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -367,7 +456,7 @@
                     <ul class="space-y-4 mb-8 text-sm text-text-white">
                         <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-cyan mr-3 text-lg"></i> Nielimitowane połączenia OPC-UA / SCADA</li>
                         <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-cyan mr-3 text-lg"></i> Monitorowanie SPC na żywo</li>
-                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-cyan mr-3 text-lg"></i> Zaawansowane eksporty Plotly.js</li>
+                        <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-cyan mr-3 text-lg"></i> Zaawansowane raporty i eksporty danych</li>
                         <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-cyan mr-3 text-lg"></i> Integracje API z ERP/MES</li>
                         <li class="flex items-center"><i class="ph-fill ph-check-circle text-accent-cyan mr-3 text-lg"></i> Priorytetowe wsparcie (SLA)</li>
                     </ul>
@@ -412,10 +501,10 @@
                 <div class="col-span-1 md:col-span-1">
                     <div class="flex items-center gap-2 mb-4">
                         <i class="ph-fill ph-hexagon text-accent-blue text-2xl"></i>
-                        <span class="text-text-white font-bold text-lg">Aegis Automation</span>
+                        <span class="text-text-white font-bold text-lg">AegisAuto</span>
                     </div>
                     <p class="text-sm text-text-light font-mono">
-                        Dane > Wizualizacja > Działanie.
+                        Ochrona • Automatyzacja • Kontrola.
                     </p>
                 </div>
                 <div>
@@ -443,146 +532,14 @@
                 </div>
             </div>
             <div class="border-t border-white/5 pt-8 text-center text-sm text-text-light/60 font-mono">
-                &copy; 2026 Nexis Automation Sp. z o.o. Wszelkie prawa zastrzeżone.
+                &copy; 2026 Aegis Automation Sp. z o.o. Wszelkie prawa zastrzeżone.
             </div>
         </div>
     </footer>
 
     <script>
         // ----------------------------------------------------
-        // 1. PLOTLY CHART INITIALIZATION & ANIMATION
-        // ----------------------------------------------------
-        document.addEventListener('DOMContentLoaded', () => {
-            const chartDiv = document.getElementById('hero-chart');
-            
-            // Generate some synthetic manufacturing/lab data
-            function generateData(points, noiseLevel, trend) {
-                let y = [];
-                let x = [];
-                let val = 50;
-                for(let i = 0; i < points; i++) {
-                    x.push(i);
-                    val += (Math.random() - 0.5) * noiseLevel + trend;
-                    y.push(val);
-                }
-                return {x, y};
-            }
-
-            const data1 = generateData(100, 3, 0.1);
-            const data2 = generateData(100, 2, 0.05);
-
-            const trace1 = {
-                x: data1.x,
-                y: data1.y,
-                mode: 'lines+markers',
-                name: 'Wydajność (%)',
-                line: {
-                    color: '#00B4FF', // Accent Blue
-                    width: 3,
-                    shape: 'spline',
-                    smoothing: 1.3
-                },
-                marker: {
-                    size: 4,
-                    color: '#00B4FF',
-                    symbol: 'circle'
-                },
-                fill: 'tozeroy',
-                fillcolor: 'rgba(0, 180, 255, 0.05)',
-                hoverinfo: 'y+name'
-            };
-
-            const trace2 = {
-                x: data2.x,
-                y: data2.y.map(val => val - 20), // offset for visual distinction
-                mode: 'lines',
-                name: 'Limit Kontrolny',
-                line: {
-                    color: '#A78BFA', // Accent Purple
-                    width: 2,
-                    dash: 'dot'
-                },
-                hoverinfo: 'none'
-            };
-
-            const layout = {
-                paper_bgcolor: 'transparent',
-                plot_bgcolor: 'transparent',
-                margin: { t: 20, r: 20, l: 40, b: 40 },
-                font: {
-                    family: 'Fira Code, monospace',
-                    color: '#8b949e',
-                    size: 11
-                },
-                xaxis: {
-                    showgrid: true,
-                    gridcolor: 'rgba(255, 255, 255, 0.05)',
-                    zeroline: false,
-                    showline: true,
-                    linecolor: 'rgba(255, 255, 255, 0.1)',
-                },
-                yaxis: {
-                    showgrid: true,
-                    gridcolor: 'rgba(255, 255, 255, 0.05)',
-                    zeroline: false,
-                    showline: true,
-                    linecolor: 'rgba(255, 255, 255, 0.1)',
-                },
-                hovermode: 'closest',
-                showlegend: true,
-                legend: {
-                    x: 0.02,
-                    y: 0.98,
-                    bgcolor: 'rgba(22, 27, 34, 0.8)',
-                    bordercolor: 'rgba(255, 255, 255, 0.1)',
-                    borderwidth: 1,
-                    font: { color: '#C9D1D9' }
-                },
-                // Dark mode tooltip styling
-                hoverlabel: {
-                    bgcolor: '#161B22',
-                    font: { family: 'Inter', color: '#F0F6FC' },
-                    bordercolor: '#39FFDC'
-                }
-            };
-
-            const config = {
-                responsive: true,
-                displayModeBar: false
-            };
-
-            Plotly.newPlot(chartDiv, [trace1, trace2], layout, config);
-
-            // Simulate real-time data streaming update
-            let cnt = 100;
-            setInterval(() => {
-                let update = {
-                    x: [[cnt], [cnt]],
-                    y: [[data1.y[data1.y.length-1] + (Math.random() - 0.5) * 3 + 0.1], [data2.y[data2.y.length-1] + (Math.random() - 0.5) * 2]]
-                };
-                
-                Plotly.extendTraces(chartDiv, update, [0, 1]);
-                
-                // Keep the window sliding (keep last 100 points)
-                if(cnt > 100) {
-                    Plotly.relayout(chartDiv, {
-                        xaxis: {
-                            range: [cnt - 100, cnt],
-                            showgrid: true, gridcolor: 'rgba(255, 255, 255, 0.05)', showline: true, linecolor: 'rgba(255, 255, 255, 0.1)'
-                        }
-                    });
-                }
-                cnt++;
-            }, 1000);
-            
-            // Handle window resize explicitly just in case
-            window.addEventListener('resize', () => {
-                Plotly.Plots.resize(chartDiv);
-            });
-        });
-
-        // ----------------------------------------------------
-        // 2. CANVAS PARTICLE NETWORK (Hacker-space Aesthetic)
+        // CANVAS PARTICLE NETWORK (Hacker-space Aesthetic)
         // ----------------------------------------------------
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
